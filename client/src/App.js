@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 import Particles from 'react-tsparticles';
 import {} from 'reactstrap';
@@ -9,7 +9,16 @@ import Navigation from './components/Navigation';
 const config = require('./particles-config.json');
 
 function App() {
-  const [animation, setAnimation] = useState(false);
+  const [animation, setAnimation] = useState(false)
+
+  useEffect(() => {
+    const value = localStorage.getItem('animation')
+    setAnimation(value === 'true')
+  }, []);
+  const setAnim = (value) => {
+    setAnimation(value)
+    localStorage.setItem('animation', value)
+  }
 
   return (
     <>
@@ -18,7 +27,7 @@ function App() {
           params={config} />
       </div>
       <div className="container py-2 text-light min-vh-100 bg-white bg-opacity-10">
-        <Navigation animation={animation} setAnimation={setAnimation} />
+        <Navigation animation={animation} setAnimation={setAnim} />
       </div>
     </>
   );

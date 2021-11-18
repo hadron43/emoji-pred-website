@@ -5,17 +5,11 @@ Nav, NavItem, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} 
 function Navigation({animation, setAnimation}) {
     const [collapsed, setCollapsed] = useState(true);
 
-    const radios = [
-        { name: 'Off', value: '1' },
-        { name: 'On', value: '2' },
-    ];
-
     return(
         <div>
             <Navbar
                 color="light"
                 expand="md"
-                full
                 light
                 className={`rounded px-2 ${collapsed ? 'rounded-pill' : 'rounded-3'}`}
             >
@@ -48,7 +42,7 @@ function Navigation({animation, setAnimation}) {
                     >
                         Options
                     </DropdownToggle>
-                    <DropdownMenu right>
+                    <DropdownMenu end>
                         <DropdownItem>
                         Option 1
                         </DropdownItem>
