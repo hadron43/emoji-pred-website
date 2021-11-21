@@ -21,7 +21,7 @@ function Test({ automatic = false }) {
         setEmojis([])
         console.log(textToBeFetched)
 
-        fetch('/', {
+        fetch('https://emoji-pred-backend.herokuapp.com/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
