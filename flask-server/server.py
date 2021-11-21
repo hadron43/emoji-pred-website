@@ -3,7 +3,7 @@ from flask.globals import request
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=['POST'])
 def emoji():
     print(request.args)
     return {
