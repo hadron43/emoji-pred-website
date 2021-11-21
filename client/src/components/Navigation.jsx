@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {Navbar, NavLink, NavbarBrand, NavbarText, NavbarToggler, Collapse, Button,
 Nav, NavItem, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 
-function Navigation({animation, setAnimation}) {
+function Navigation({animation, setAnimation, automatic, setAutomatic}) {
     const [collapsed, setCollapsed] = useState(true);
 
     return(
@@ -23,15 +23,9 @@ function Navigation({animation, setAnimation}) {
                     navbar
                 >
                     <NavItem>
-                    <NavLink href="/components/">
-                        Components
-                    </NavLink>
+                        <NavLink>Paper</NavLink>
                     </NavItem>
-                    <NavItem>
-                    <NavLink href="">
-                        GitHub
-                    </NavLink>
-                    </NavItem>
+
                     <UncontrolledDropdown
                     inNavbar
                     nav
@@ -40,23 +34,35 @@ function Navigation({animation, setAnimation}) {
                         caret
                         nav
                     >
-                        Options
+                        Authors
                     </DropdownToggle>
                     <DropdownMenu end>
                         <DropdownItem>
-                        Option 1
+                        Jahnvi Kumari
                         </DropdownItem>
                         <DropdownItem>
-                        Option 2
+                        Varun Khurana
                         </DropdownItem>
-                        <DropdownItem divider />
                         <DropdownItem>
-                        Reset
+                        Harsh Kumar
                         </DropdownItem>
                     </DropdownMenu>
                     </UncontrolledDropdown>
                 </Nav>
                 <NavbarText>
+                    <Button className="rounded-pill"
+                        outline
+                        color='dark'>
+                        <i class='bi bi-github h5'> Github</i>
+                    </Button>
+                    <span className="mx-1"></span>
+                    <Button className="rounded-pill"
+                        outline={!automatic}
+                        onClick={() => setAutomatic(!automatic)}
+                        color="warning">
+                        <i class={'bi bi-lightning-charge'}></i>
+                    </Button>
+                    <span className="mx-1"></span>
                     <Button className="rounded-pill"
                         outline={!animation}
                         onClick={() => setAnimation(!animation)}
