@@ -16,7 +16,7 @@ function App() {
   const [automatic, setAutomatic] = useState(false)
 
   useEffect(() => {
-    setAnimation(localStorage.getItem('animation') === 'true')
+    setAnimation(localStorage.getItem('animation') !== 'false')
     setAutomatic(localStorage.getItem('automatic') === 'true')
   }, []);
   const setAnim = (value) => {
@@ -35,7 +35,7 @@ function App() {
           params={config} />
       </div>
       <div className="container pt-2 pb-5 text-light min-vh-100 bg-white bg-opacity-10 position-relative">
-        <Navigation animation={animation} setAnimation={setAnim} 
+        <Navigation animation={animation} setAnimation={setAnim}
           automatic={automatic} setAutomatic={setAuto}/>
         <Description />
         <Test automatic={automatic} />
