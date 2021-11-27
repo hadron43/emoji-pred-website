@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Input, Button } from 'reactstrap';
+import { Container, Row, Col, Input, Button, Progress } from 'reactstrap';
 
+// const base = 'https://emoji-pred-backend.herokuapp.com/'
+const base = 'http://127.0.0.1:5000/'
 
 function Test({ automatic = false }) {
     const [loading, setLoading] = useState(false)
     const [errMessage, setErrMessage] = useState('')
     const [emojis, setEmojis] = useState([])
+    const [confidence, setConfidence] = useState([])
     const [text, setText] = useState('')
     const [lastText, setLastText] = useState('')
+    const [lang, setLang] = useState('English')
 
     const [count, setCount] = useState(0)
 
@@ -21,7 +25,7 @@ function Test({ automatic = false }) {
         setEmojis([])
         console.log(textToBeFetched)
 
-        fetch('https://emoji-pred-backend.herokuapp.com/', {
+        fetch(base + lang.toLocaleLowerCase() + '/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,12 +40,15 @@ function Test({ automatic = false }) {
             return response;
         })
         .then(response => response.json())
-        .then(({emoji}) => {
+        .then(({confidence, emoji}) => {
             setEmojis(emoji)
+            setConfidence(confidence)
             setErrMessage('')
             setLoading(false)
         })
         .catch(err => {
+            setEmojis([])
+            setConfidence([])
             console.log(err);
             setErrMessage(err.message)
             setLoading(false)
@@ -58,6 +65,28 @@ function Test({ automatic = false }) {
         <Container className="mt-5">
             <Row>
                 <h3>Test Our Model</h3>
+            </Row>
+
+            <Row className="my-4">
+                <Col>
+                <span className="md-2">Language</span>
+                <Input
+                    id="language"
+                    name="language"
+                    type="select"
+                    value={lang}
+                    className="background-light-white text-white"
+                    onChange={(e) => setLang(e.target.value)}
+                >
+                {
+                    ['English', 'Hindi', 'Bengali', 'Telegu'].map((item) => {
+                        return (
+                            <option>{item}</option>
+                        )
+                    })
+                }
+                </Input>
+                </Col>
             </Row>
 
             <Row>
@@ -89,18 +118,23 @@ function Test({ automatic = false }) {
             </Row>
 
             <Row className="mt-5">
-                <Col className="text-center">
-                    {
-                        emojis.map((emo) => {
-                            return (
-                                <Button outline color="warning" className="mx-3 rounded-pill" size="lg"
-                                    onClick={() => setText(text + emo)}>
-                                    <p className="h2 d-flex m-auto">{emo}</p>
-                                </Button>
-                            )
-                        })
-                    }
-                </Col>
+                <Col></Col>
+                <Col></Col>
+                {
+                    emojis.map((emo) => {
+                        return (
+                            <Col className="text-center">
+                            <Button outline color="warning" className="mx-3 mb-3 rounded-pill" size="lg"
+                                onClick={() => setText(text + emo)}>
+                                <p className="h2 d-flex m-auto">{emo}</p>
+                            </Button>
+                            <Progress color="success" value={parseInt(parseFloat(confidence[emojis.indexOf(emo)] * 100))} />
+                            </Col>
+                        )
+                    })
+                }
+                <Col></Col>
+                <Col></Col>
             </Row>
         </Container>
     );
