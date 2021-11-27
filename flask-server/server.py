@@ -1,18 +1,16 @@
 from flask import Flask
 from flask.globals import request
 from flask_cors import CORS
+import nlp_project_deployment as project
 
 app = Flask(__name__)
 
 CORS(app)
 
-@app.route("/", methods=['POST'])
+@app.route("/english/", methods=['POST'])
 def emoji():
-    print(request.args)
-    return {
-        "emoji": ["😂", "😒", "😐"],
-        "confidence": [1, 0.9, 0.02]
-    }
+    print(request.json)
+    return project.end_to_end_eng(request.json['text'])
 
 if __name__ == "__main__":
     app.run(debug=True)
