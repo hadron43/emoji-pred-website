@@ -9,8 +9,7 @@ Original file is located at
 """
 ### Imports"""
 
-import gensim
-import gensim.downloader
+# from transformers import pipeline
 from gensim.models import KeyedVectors
 import re
 import string
@@ -18,10 +17,7 @@ import csv
 import numpy as np
 
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.utils import to_categorical
+import tensorflow_hub as hub
 
 # Tensorflow GPU check
 # tf.test.is_gpu_available(
@@ -40,7 +36,15 @@ max_pad_len = 10
 num_classes = 20
 
 # Saved model path
-model_eng_path = 'emoji_pred.h5'
+model_eng_path = 'emoji_pred_use-4.h5'
+model_hindi_path = 'emoji_pred_hindi.h5'
+model_telegu_path = 'emoji_pred_telegu.h5'
+model_bengali_path = 'emoji_pred_bengali.h5'
+
+# Universal Sentence Encoder
+module_url = "use/"
+univ_model = hub.load(module_url)
+# univ_model = hub.load('models/use-4')
 
 """### Cleaning Text"""
 
@@ -174,14 +178,8 @@ def add_embeddings(data):
 """
 
 eng_model = tf.keras.models.load_model(model_eng_path)
-eng_model.summary()
-
-# Evaluate the restored model
-# Just for checking
-# Remove if only predictions are required
-# loss, acc = eng_model.evaluate(X, y, verbose=2)
-# print('Restored model, accuracy: {:5.4f}%'.format(100 * acc))
-
+# hindi_model = tf.keras.models.load_model(model_hindi_path)
+# telegu_model = tf.keras.models.load_model(model_telegu_path)
 
 def load_mapping(file_path):
   fin = open(file_path, 'r')
@@ -199,6 +197,11 @@ def load_mapping(file_path):
 eng_emoji_map = load_mapping('map_eng.csv')
 
 def end_to_end(text, model, emoji_map):
+    ret_obj = {
+        'emoji': [],
+        'confidence': []
+    }
+
     clean_text = strip_links(text)
     clean_text = strip_emoji(text)
     clean_text = preprocess(text)
@@ -211,12 +214,17 @@ def end_to_end(text, model, emoji_map):
     # ............................................
     if (len(data)>2):
         process_further = True
-    X = add_embeddings(data)
-    X = X.reshape(1, X.shape[0], X.shape[1])
+    X_tok = add_embeddings(data).flatten()
+    X_tok = X_tok.reshape(1, X_tok.shape[0])
+
+    X_sent = np.array(univ_model([clean_text]))
+
+    X = np.concatenate((X_tok, X_sent), axis=1)
+    if (X.shape != (1, 2512)):
+        return ret_obj
 
     # assuming each test input is just 1 sentence for which emoji is to be predicted
-    test_input = X[0].reshape(1, X.shape[1], X.shape[2])
-    y_pred = model.predict(test_input)
+    y_pred = model.predict(X)
 
     d = {}
     for i in range(0, len(y_pred[0])):
@@ -227,11 +235,6 @@ def end_to_end(text, model, emoji_map):
 
     print(d)
 
-    ret_obj = {
-        'emoji': [],
-        'confidence': []
-    }
-
     for item in d:
         ret_obj['emoji'].append(emoji_map[item[0]])
         ret_obj['confidence'].append(str(item[1]))
@@ -240,6 +243,15 @@ def end_to_end(text, model, emoji_map):
 
 def end_to_end_eng(text):
     return end_to_end(text, eng_model, eng_emoji_map)
+
+
+# pipe_hindi = pipeline(task='text2text-generation', model='Helsinki-NLP/opus-mt-hi-en')
+# pipe_telegu = pipeline(task='text2text-generation', model='Helsinki-NLP/opus-mt-te-en')
+# pipe_bengali = pipeline(task='text2text-generation', model='Helsinki-NLP/opus-mt-bn-en')
+
+# def end_to_end_telegu(text):
+#     temp = pipe_telegu(text, forced_bos_token_id=pipe_telegu.tokenizer.get_lang_id(lang='en'))
+#     return end_to_end(temp[0]['generated_text'], )
 
 if __name__ == '__main__':
     while(True):
