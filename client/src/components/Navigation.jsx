@@ -22,9 +22,11 @@ function Navigation({animation, setAnimation, automatic, setAutomatic}) {
                     className="me-auto"
                     navbar
                 >
+                    <a href="https://drive.google.com/file/d/1zKbIOUoP9lPOX7euO_BwnhD_egMc-rJw/view?usp=sharing" target="_blank" rel="noreferrer">
                     <NavItem>
                         <NavLink>Paper</NavLink>
                     </NavItem>
+                    </a>
 
                     <UncontrolledDropdown
                     inNavbar
@@ -50,11 +52,13 @@ function Navigation({animation, setAnimation, automatic, setAutomatic}) {
                     </UncontrolledDropdown>
                 </Nav>
                 <NavbarText>
+                <a href="https://github.com/hadron43/emoji-pred-website" target="_blank" rel="noreferrer">
                     <Button className="rounded-pill"
                         outline
                         color='dark'>
                         <i class='bi bi-github h5'> Github</i>
                     </Button>
+                    </a>
                     <span className="mx-1"></span>
                     <Button className="rounded-pill"
                         outline={!automatic}
