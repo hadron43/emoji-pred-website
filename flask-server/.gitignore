@@ -2,3 +2,5 @@
 *.npy
 *.h5
 venv
+use
+__pycache__
